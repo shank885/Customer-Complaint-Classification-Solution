@@ -2,15 +2,21 @@
 
 import openai
 
-# Function to classify the customer complaint based on the image description
 def create_openai_client(api_version, api_key, api_endpoint):
-    client = AzureOpenAI(
+    """
+    Python function to create openai client
+
+    Returns:
+    class: openai AzureOpenAI class instance 
+    """
+    client = openai.AzureOpenAI(
         api_version=api_version,
         api_key=api_key,
         azure_endpoint=api_endpoint
     )
     return client
 
+# Function to classify the customer complaint based on the image description
 def classify_with_gpt(azure_secrets, complaint, categories_file):
     """
     Classifies the customer complaint into a category/subcategory based on the image description.
@@ -27,7 +33,7 @@ def classify_with_gpt(azure_secrets, complaint, categories_file):
     
     # crete openai client
     client = create_openai_client(
-        azure_secrets['GPT_API_VERSION',
+        azure_secrets['GPT_API_VERSION'],
         azure_secrets['AZURE_API_KEY'],
         azure_secrets['AZURE_ENDPOINT']
     )

@@ -26,22 +26,27 @@ def transcribe_audio(azure_secrets: dict, audio_file:str):
     """
     # create openai client
     client = create_openai_client(
-        azure_secrets['WHISPER_API_VERSION',
+        azure_secrets['WHISPER_API_VERSION'],
         azure_secrets['AZURE_API_KEY'],
         azure_secrets['AZURE_ENDPOINT']
     )
     try:
-        # TODO: Load the audio file.
+        # Load the audio file.
         with open(audio_file, 'rb') as audio_file:
             
-            # TODO: Call the Whisper model to transcribe the audio file.
-            response = client.audio.transcriptions.create( # translations
+            # Call the Whisper model to transcribe the audio file.
+            transcription = client.audio.transcriptions.create( # translations
                 model=azure_secrets['WHISPER_DEPLOYMENT'],
                 file=audio_file,
                 probability=0.5
             )
-        # TODO: Extract the transcription and return it.
-        return transcript.text
+
+        # save the transcribed audio
+        with open('./output/transcription.txt', 'w') as text_file:
+            text_file.write(transcription.txt)
+        
+        # Extract the transcription and return it.
+        return transcription.text
     
     except Exception as e:
         print(f"An error has occured: {e}")
@@ -73,4 +78,6 @@ if __name__ == "__main__":
 
     # generate transcript
     transcription = transcribe_audio(azure_secrets, audio_file)
+    
+    # print transcript
     print(transcription)

@@ -19,7 +19,7 @@ azure_secrets = {
     'DALLE_DEPLOYMENT': os.getenv('DALLE_DEPLOYMENT'),
     'GPT_API_VERSION': os.getenv('GPT_API_VERSION'),
     'GPT_DEPLOYMENT': os.getenv('GPT_DEPLOYMENT'),
-    }
+}
 
 def annotate_image(image_url: str, annotations: list) -> str:
     """
@@ -57,25 +57,36 @@ def main():
     None
     """
     # Call the function to transcribe the audio complaint.
+    audio_file = './audio/katiesteve.wav'
     audio_transcript = transcribe_audio(azure_secrets, audio_file)
 
     # Create a prompt from the transcription.
-    prompt = f'Generate a visual representation of the customer \
-               complaint: {audio_transcript}'
+    transcript_prompt = f'Generate a minimal image to represent the customer complaint: {audio_transcript}'
 
     # Generate an image based on the prompt.
     image_path, image_url = generate_image(
         azure_secrets, 
-        prompt, 
+        transcript_prompt, 
         '1024x1024', 
         'hd', 
         'natural'
     )
 
-    # TODO: Describe the generated image.
-    description_prompt = 'identifies key visual elements related to the customer \
-        complaint in the image, include the bounding box details for \
-        the key elements in the image.'
+    # Describe the generated image.
+    description_prompt = """
+    Identify key visual elements related to the customer complaint in the image. 
+    Return a brief description along with the bounding box details for the key elements 
+    in the image in a JSON format with the following structure:
+
+    {
+        "description": "<image description>",
+        "annotation": [
+            {"bbox": (<x_min>, <y_min>, <x_max>, <y_max>)},
+            {"bbox": (<x_min>, <y_min>, <x_max>, <y_max>)}
+        ]
+    }
+    """
+
     description = describe_image(
         azure_secrets, 
         image_path, 
@@ -88,7 +99,7 @@ def main():
     print("Annotated Image Path:", annotated_image_path)
 
 
-    # TODO: Classify the complaint based on the image description.
+    # Classify the complaint based on the image description.
     classification = classify_with_gpt(
         azure_secrets,
         description,

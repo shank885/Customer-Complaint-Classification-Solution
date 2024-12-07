@@ -4,14 +4,19 @@ import openai
 
 
 def create_openai_client(api_version, api_key, api_endpoint):
-    client = AzureOpenAI(
+    """
+    Python function to create openai client
+
+    Returns:
+    class: openai AzureOpenAI class instance 
+    """
+    client = openai.AzureOpenAI(
         api_version=api_version,
         api_key=api_key,
         azure_endpoint=api_endpoint
     )
     return client
 
-# Function to describe the generated image and annotate issues
 def local_image_to_data_url(image_path):
     mime_type, _ = guess_type(image_path)
     if mime_type is None:
@@ -22,6 +27,8 @@ def local_image_to_data_url(image_path):
             image_file.read()).decode('utf-8')
     return f"data:{mime_type};base64,{base64_encoded_data}"
 
+
+# Function to describe the generated image and annotate issues
 def describe_image(azure_secrets, image_path, prompt):
     """
     Describes an image and identifies key visual elements related to the customer complaint.
@@ -34,7 +41,7 @@ def describe_image(azure_secrets, image_path, prompt):
 
     # crete openai client
     client = create_openai_client(
-        azure_secrets['GPT_API_VERSION',
+        azure_secrets['GPT_API_VERSION'],
         azure_secrets['AZURE_API_KEY'],
         azure_secrets['AZURE_ENDPOINT']
     )
