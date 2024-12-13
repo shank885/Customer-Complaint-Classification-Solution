@@ -55,6 +55,18 @@ The project consists of the following files:
 
    - Orchestrates the entire workflow, calling each of the modules in sequence. The workflow steps are described in comments, and you are required to implement the logic to connect each module.
 
+6. **`.env`**:
+
+   - This file contains all the azure secrets listed below:
+      - AZURE_ENDPOINT
+      - AZURE_API_KEY
+      - WHISPER_API_VERSION
+      - WHISPER_DEPLOYMENT
+      - DALLE_API_VERSION
+      - DALLE_DEPLOYMENT
+      - GPT_API_VERSION
+      - GPT_DEPLOYMENT
+
 ## Learning Objectives
 
 - **Hands-on with Generative AI**: You will learn to implement generative AI models for real-world tasks such as image generation and language modeling.
