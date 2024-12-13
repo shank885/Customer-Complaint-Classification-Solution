@@ -74,14 +74,14 @@ if __name__ == "__main__":
     load_dotenv()
     
     azure_secrets = {
-    'AZURE_ENDPOINT': os.getenv('AZURE_ENDPOINT'),
-    'AZURE_API_KEY': os.getenv('AZURE_API_KEY'),
+    'AZURE_ENDPOINT'     : os.getenv('AZURE_ENDPOINT'),
+    'AZURE_API_KEY'      : os.getenv('AZURE_API_KEY'),
     'WHISPER_API_VERSION': os.getenv('WHISPER_API_VERSION'),
-    'WHISPER_DEPLOYMENT': os.getenv('WHISPER_DEPLOYMENT'),
-    'DALLE_API_VERSION': os.getenv('DALLE_API_VERSION'),
-    'DALLE_DEPLOYMENT': os.getenv('DALLE_DEPLOYMENT'),
-    'GPT_API_VERSION': os.getenv('GPT_API_VERSION'),
-    'GPT_DEPLOYMENT': os.getenv('GPT_DEPLOYMENT'),
+    'WHISPER_DEPLOYMENT' : os.getenv('WHISPER_DEPLOYMENT'),
+    'DALLE_API_VERSION'  : os.getenv('DALLE_API_VERSION'),
+    'DALLE_DEPLOYMENT'   : os.getenv('DALLE_DEPLOYMENT'),
+    'GPT_API_VERSION'    : os.getenv('GPT_API_VERSION'),
+    'GPT_DEPLOYMENT'     : os.getenv('GPT_DEPLOYMENT'),
     }
 
     

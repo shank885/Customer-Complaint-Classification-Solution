@@ -60,7 +60,7 @@ def main():
     None
     """
     # Call the function to transcribe the audio complaint.
-    print('\n\nTanscribing Audio...\n')
+    print('\n\nTranscribing Audio...\n')
     
     audio_file = './audio/customer_complaint.wav'
     audio_transcript = transcribe_audio(azure_secrets, audio_file)

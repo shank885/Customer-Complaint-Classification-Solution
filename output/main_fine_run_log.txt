@@ -57,6 +57,3 @@ The complaint related to a laptop potentially experiencing overheating issues sh
 - **Category**: Electronics
   - **Subcategory**: Computers & Tablets
 
-
-
-(uda) gyrus10@gyrus10-G3-3500:customer_complaint_classification$ 
