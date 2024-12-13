@@ -2,39 +2,42 @@
 
 # Import functions from other modules
 import os
+import requests
 from whisper import transcribe_audio
 from dalle import generate_image
 from vision import describe_image
 from gpt import classify_with_gpt
 from dotenv import load_dotenv
+from PIL import Image, ImageDraw
 
 # get azure secrets from .env file
 load_dotenv()
+
 azure_secrets = {
-    'AZURE_ENDPOINT': os.getenv('AZURE_ENDPOINT'),
-    'AZURE_API_KEY': os.getenv('AZURE_API_KEY'),
+    'AZURE_ENDPOINT'     : os.getenv('AZURE_ENDPOINT'),
+    'AZURE_API_KEY'      : os.getenv('AZURE_API_KEY'),
     'WHISPER_API_VERSION': os.getenv('WHISPER_API_VERSION'),
-    'WHISPER_DEPLOYMENT': os.getenv('WHISPER_DEPLOYMENT'),
-    'DALLE_API_VERSION': os.getenv('DALLE_API_VERSION'),
-    'DALLE_DEPLOYMENT': os.getenv('DALLE_DEPLOYMENT'),
-    'GPT_API_VERSION': os.getenv('GPT_API_VERSION'),
-    'GPT_DEPLOYMENT': os.getenv('GPT_DEPLOYMENT'),
+    'WHISPER_DEPLOYMENT' : os.getenv('WHISPER_DEPLOYMENT'),
+    'DALLE_API_VERSION'  : os.getenv('DALLE_API_VERSION'),
+    'DALLE_DEPLOYMENT'   : os.getenv('DALLE_DEPLOYMENT'),
+    'GPT_API_VERSION'    : os.getenv('GPT_API_VERSION'),
+    'GPT_DEPLOYMENT'     : os.getenv('GPT_DEPLOYMENT'),
 }
 
-def annotate_image(image_url: str, annotations: list) -> str:
+def annotate_image(image_path: str, annotations: list) -> str:
     """
     Draws bounding boxes or annotations on the image and saves it locally.
     Returns the path to the annotated image.
     """
-    response = requests.get(image_url)
-    image = Image.open(response.raw)
+    # response = requests.get(image_url)
+    image = Image.open(image_path)
 
     draw = ImageDraw.Draw(image)
     for annotation in annotations:
         box = annotation['bbox']
         label = annotation['label']
-        draw.rectangle(box, outline="red", width=2)
-        draw.text((box[0], box[1]), label, fill="red")
+        draw.rectangle(box, outline="red", width=3)
+        draw.text((box[0], box[1]), label, fill="red", font_size=25)
 
     annotated_path = "./output/annotated_image.png"
     image.save(annotated_path)
@@ -57,12 +60,17 @@ def main():
     None
     """
     # Call the function to transcribe the audio complaint.
-    audio_file = './audio/katiesteve.wav'
+    print('\n\nTanscribing Audio...\n')
+    
+    audio_file = './audio/customer_complaint.wav'
     audio_transcript = transcribe_audio(azure_secrets, audio_file)
-
+    print(audio_transcript)
+    print('\n\n')
+    
     # Create a prompt from the transcription.
-    transcript_prompt = f'Generate a minimal image to represent the customer complaint: {audio_transcript}'
+    print('\n\nGenerating Image...\n')
 
+    transcript_prompt = f'Generate a realistic image to represent the customer complaint: {audio_transcript}'
     # Generate an image based on the prompt.
     image_path, image_url = generate_image(
         azure_secrets, 
@@ -71,44 +79,48 @@ def main():
         'hd', 
         'natural'
     )
+    print('\n\n')
 
     # Describe the generated image.
+    print('\n\nDescribing Image...\n')
+    
     description_prompt = """
     Identify key visual elements related to the customer complaint in the image. 
     Return a brief description along with the bounding box details for the key elements 
-    in the image in a JSON format with the following structure:
+    in the image in a JSON format with the following structure. The image size is 1024x1024:
 
     {
         "description": "<image description>",
         "annotation": [
-            {"bbox": (<x_min>, <y_min>, <x_max>, <y_max>)},
-            {"bbox": (<x_min>, <y_min>, <x_max>, <y_max>)}
+            {"bbox": (<x_min>, <y_min>, <x_max>, <y_max>), 'label': <object_in_region>},
+            {"bbox": (<x_min>, <y_min>, <x_max>, <y_max>), 'label': <object_in_region>}
         ]
     }
     """
 
-    description = describe_image(
+    image_description = describe_image(
         azure_secrets, 
         image_path, 
         description_prompt
     )
+    print('\n\n')
 
-    # TODO: Annotate the reported issue in the image.
-    annotations = [{"bbox": (50, 50, 200, 200), "label": "Example Label"}]
-    annotated_image_path = annotate_image(image_url, annotations)
+    # Annotate the reported issue in the image.
+    annotations = image_description["annotation"]
+    annotated_image_path = annotate_image(image_path, annotations)
     print("Annotated Image Path:", annotated_image_path)
-
+    print('\n\n')
 
     # Classify the complaint based on the image description.
+    print('\n\nClassifying description...\n')
     classification = classify_with_gpt(
         azure_secrets,
-        description,
+        image_description['description'],
         'categories.json'
     )
+    print(classification)
+    print('\n\n')
 
-    # TODO: Print or store the results as required.
-
-    pass  # Replace this with your implementation
 
 # Example Usage (for testing purposes, remove/comment when deploying):
 if __name__ == "__main__":

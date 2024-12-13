@@ -1,6 +1,10 @@
 # vision.py
 import os
+import ast
+import json
 import openai
+import base64
+from mimetypes import guess_type
 
 
 def create_openai_client(api_version, api_key, api_endpoint):
@@ -49,8 +53,9 @@ def describe_image(azure_secrets, image_path, prompt):
     # Call the model to describe the image and identify key elements.
     response = client.chat.completions.create(
         model=azure_secrets['GPT_DEPLOYMENT'],
+        response_format={ "type": "json_object" },
         messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": "You are a helpful assistant designed to output JSON."},
             {
                 "role": "user",
                 "content": [
@@ -61,29 +66,55 @@ def describe_image(azure_secrets, image_path, prompt):
         ],
         max_tokens=1024
     )
+    image_description = response.choices[0].message.content
+    print(image_description)
+    
+    desc_json = ast.literal_eval(image_description)
+    
+    with open('./output/image_description.txt', 'w') as desc_file:
+        desc_file.write(str(desc_json))
+    print(f"image description saved to :./output/image_description.txt")
+    
+    with open('./output/image_description_annotation.json', 'w') as annot_file:
+        json.dump(desc_json, annot_file, sort_keys=True, indent=4)
+    print(f"image annotation info saved to: ./output/image_description_annotation.json")
+    
     # Extract the description and return it.
-    return response.choices[0].message.content
+    return desc_json
 
 # Example Usage (for testing purposes, remove/comment when deploying):
-# if __name__ == "__main__":
+if __name__ == "__main__":
     import os
     from dotenv import load_dotenv
     
     load_dotenv()
+    
     azure_secrets = {
-    'AZURE_ENDPOINT': os.getenv('AZURE_ENDPOINT'),
-    'AZURE_API_KEY': os.getenv('AZURE_API_KEY'),
+    'AZURE_ENDPOINT'     : os.getenv('AZURE_ENDPOINT'),
+    'AZURE_API_KEY'      : os.getenv('AZURE_API_KEY'),
     'WHISPER_API_VERSION': os.getenv('WHISPER_API_VERSION'),
-    'WHISPER_DEPLOYMENT': os.getenv('WHISPER_DEPLOYMENT'),
-    'DALLE_API_VERSION': os.getenv('DALLE_API_VERSION'),
-    'DALLE_DEPLOYMENT': os.getenv('DALLE_DEPLOYMENT'),
-    'GPT_API_VERSION': os.getenv('GPT_API_VERSION'),
-    'GPT_DEPLOYMENT': os.getenv('GPT_DEPLOYMENT'),
+    'WHISPER_DEPLOYMENT' : os.getenv('WHISPER_DEPLOYMENT'),
+    'DALLE_API_VERSION'  : os.getenv('DALLE_API_VERSION'),
+    'DALLE_DEPLOYMENT'   : os.getenv('DALLE_DEPLOYMENT'),
+    'GPT_API_VERSION'    : os.getenv('GPT_API_VERSION'),
+    'GPT_DEPLOYMENT'     : os.getenv('GPT_DEPLOYMENT'),
     }
     
     image_path = './output/generated_image.png'
-    prompt = 'identifies key visual elements related to the customer \
-        complaint in the image. Mark the bounding box of the region in the image with any notable defects.'
     
-    description = describe_image(azure_secrets, image_path)
-    print(description)
+    description_prompt = """
+    Identify key visual elements related to the customer complaint in the image. 
+    Return a brief description along with the bounding box details for the key elements 
+    in the image in a JSON format with the following structure:
+
+    {
+        "description": "<image description>",
+        "annotation": [
+            {"bbox": (<x_min>, <y_min>, <x_max>, <y_max>), 'label': <object_in_region>},
+            {"bbox": (<x_min>, <y_min>, <x_max>, <y_max>), 'label': <object_in_region>}
+        ]
+    }
+    """
+    description = describe_image(azure_secrets, image_path, description_prompt)
+    
+    # print(description)

@@ -1,0 +1,4 @@
+The complaint related to a laptop potentially experiencing overheating issues should be classified under:
+
+- **Category**: Electronics
+  - **Subcategory**: Computers & Tablets

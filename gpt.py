@@ -1,5 +1,5 @@
 # gpt.py
-
+import json
 import openai
 
 def create_openai_client(api_version, api_key, api_endpoint):
@@ -54,7 +54,16 @@ def classify_with_gpt(azure_secrets, complaint, categories_file):
         max_tokens=1024
     )
     # Extract the description and return it.
-    return response.choices[0].message.content
+    classification = response.choices[0].message.content
+   
+    # save the classification result
+    with open('./output/classification.txt', 'w') as text_file:
+        text_file.write(classification)
+        
+    print(f"Classification completed....")
+    print(f"classification result saved to: ./output/classification.txt")
+
+    return classification
 
 
 # Example Usage (for testing purposes, remove/comment when deploying):
@@ -75,14 +84,9 @@ if __name__ == "__main__":
     'GPT_DEPLOYMENT': os.getenv('GPT_DEPLOYMENT'),
     }
 
-    import json
+    
     cat = json.load(open('categories.json', 'r'))
+    image_description = "The image shows a laptop screen displaying an overheating issue warning message. The setup includes a notebook, pen, and a cup of coffee on a desk."
     
-    prompt = f"Classify this complaint Description: {'description'}\n\
-               Provide categories and subcategories from this json file: {cat}."
-    
-    print(prompt)
-    exit()
-    
-    classification = classify_with_gpt()
+    classification = classify_with_gpt(azure_secrets, image_description, 'categories.json')
     print(classification)

@@ -46,6 +46,7 @@ def generate_image(azure_secrets: dict, prompt: str, size: str, quality: str, st
         quality=quality,
         style=style
     )
+    print(f"Image generated....")
     json_response = json.loads(result.model_dump_json())
     image_url = json_response['data'][0]['url']
 
@@ -53,6 +54,8 @@ def generate_image(azure_secrets: dict, prompt: str, size: str, quality: str, st
     image = Image.open(requests.get(image_url, stream=True).raw)
     image_path = './output/generated_image.png'
     image.save(image_path)
+    print(f'image saved at: {image_path}')
+    print(f'image URL: {image_url}')
 
     # return image path
     return image_path, image_url
@@ -64,18 +67,17 @@ if __name__ == "__main__":
     
     load_dotenv()
     azure_secrets = {
-    'AZURE_ENDPOINT': os.getenv('AZURE_ENDPOINT'),
-    'AZURE_API_KEY': os.getenv('AZURE_API_KEY'),
+    'AZURE_ENDPOINT'     : os.getenv('AZURE_ENDPOINT'),
+    'AZURE_API_KEY'      : os.getenv('AZURE_API_KEY'),
     'WHISPER_API_VERSION': os.getenv('WHISPER_API_VERSION'),
-    'WHISPER_DEPLOYMENT': os.getenv('WHISPER_DEPLOYMENT'),
-    'DALLE_API_VERSION': os.getenv('DALLE_API_VERSION'),
-    'DALLE_DEPLOYMENT': os.getenv('DALLE_DEPLOYMENT'),
-    'GPT_API_VERSION': os.getenv('GPT_API_VERSION'),
-    'GPT_DEPLOYMENT': os.getenv('GPT_DEPLOYMENT'),
+    'WHISPER_DEPLOYMENT' : os.getenv('WHISPER_DEPLOYMENT'),
+    'DALLE_API_VERSION'  : os.getenv('DALLE_API_VERSION'),
+    'DALLE_DEPLOYMENT'   : os.getenv('DALLE_DEPLOYMENT'),
+    'GPT_API_VERSION'    : os.getenv('GPT_API_VERSION'),
+    'GPT_DEPLOYMENT'     : os.getenv('GPT_DEPLOYMENT'),
     }
     
-    prompt = f"A minimal image to visually represent the customer \
-               complaint which looks like: {'bike not starting'}"
+    prompt = f"Generate a minimal image to represent the customer complaint: Hi, this is regarding a serious issue with a laptop I purchased from your store just two months ago. It's a MacBook Air M2 and it's started acting up within a few weeks of use. The laptop keeps overheating even during light tasks like browsing and internet. And now it's randomly shutting down without warning. I use this device for work and these interruptions are causing me significant inconvenience. I have tried basic troubleshooting like updating the software and cleaning the vents, but nothing seems to work. I even contacted your customer support previously, but the solution they suggested didn't resolve the issue. It's frustrating to have a product fail this quickly. I am requesting an urgent resolution, either a replacement or a full refund. Please get back to me as soon as possible."
     image_path, image_url = generate_image(
         azure_secrets, 
         prompt, 

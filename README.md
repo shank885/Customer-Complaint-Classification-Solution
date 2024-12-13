@@ -1,4 +1,4 @@
-# Customer Complaint Classification Starter Project
+# Customer Complaint Classification Project
 
 ## Overview
 
