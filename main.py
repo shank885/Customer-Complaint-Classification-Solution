@@ -70,7 +70,10 @@ def main():
     # Create a prompt from the transcription.
     print('\n\nGenerating Image...\n')
 
-    transcript_prompt = f'Generate a realistic image to represent the customer complaint: {audio_transcript}'
+    # transcript_prompt = f'Generate a realistic image to represent the customer complaint: {audio_transcript}'
+    transcript_prompt = f"""I have a customer complaint which is: {audio_transcript}.\nGenerate a highly detailed, high quality image which should represent the customer complaint with the product.\nTarget specifically on the issue faced by the customer. Keep a clear non-discractive background with proper focus on product with the issue. The issue with the product should be clearly interpretable by looking at the image. Focus on highlighting the location of issue in the product. Avoid putting any additional items in the which is not relevant to the product.
+    """
+    
     # Generate an image based on the prompt.
     image_path, image_url = generate_image(
         azure_secrets, 
@@ -86,13 +89,12 @@ def main():
     
     description_prompt = """
     Identify key visual elements related to the customer complaint in the image. 
-    Return a brief description along with the bounding box details for the key elements 
+    Return a brief description along with the bounding box detail for the key element 
     in the image in a JSON format with the following structure. The image size is 1024x1024:
 
     {
         "description": "<image description>",
         "annotation": [
-            {"bbox": (<x_min>, <y_min>, <x_max>, <y_max>), 'label': <object_in_region>},
             {"bbox": (<x_min>, <y_min>, <x_max>, <y_max>), 'label': <object_in_region>}
         ]
     }

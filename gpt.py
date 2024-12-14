@@ -86,7 +86,6 @@ if __name__ == "__main__":
 
     
     cat = json.load(open('categories.json', 'r'))
-    image_description = "The image shows a laptop screen displaying an overheating issue warning message. The setup includes a notebook, pen, and a cup of coffee on a desk."
     
     classification = classify_with_gpt(azure_secrets, image_description, 'categories.json')
     print(classification)

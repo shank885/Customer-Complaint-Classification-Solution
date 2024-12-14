@@ -1,4 +1,5 @@
-Tanscribing Audio...
+
+Transcribing Audio...
 
 file :<_io.BufferedReader name='./audio/customer_complaint.wav'> transciption completed....
 transcription saved to: ./output/transcription.txt
@@ -12,7 +13,7 @@ Generating Image...
 
 Image generated....
 image saved at: ./output/generated_image.png
-image URL: https://dalleprodsec.blob.core.windows.net/private/images/12ead376-8363-4878-a265-88398224a148/generated_00.png?se=2024-12-14T16%3A18%3A37Z&sig=s0I7TQ0kXBQvtRNxlgZOs5s95KxhdiRtUJzuUPg244I%3D&ske=2024-12-20T06%3A31%3A15Z&skoid=e52d5ed7-0657-4f62-bc12-7e5dbb260a96&sks=b&skt=2024-12-13T06%3A31%3A15Z&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skv=2020-10-02&sp=r&spr=https&sr=b&sv=2020-10-02
+image URL: https://dalleprodsec.blob.core.windows.net/private/images/23178abc-cb21-4332-8438-71e94377272b/generated_00.png?se=2024-12-15T18%3A47%3A45Z&sig=wrspTRRfGCVSU368LdvKyy75wXnZXdezr82z9uiJq%2B4%3D&ske=2024-12-19T18%3A35%3A12Z&skoid=e52d5ed7-0657-4f62-bc12-7e5dbb260a96&sks=b&skt=2024-12-12T18%3A35%3A12Z&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skv=2020-10-02&sp=r&spr=https&sr=b&sv=2020-10-02
 
 
 
@@ -21,19 +22,11 @@ image URL: https://dalleprodsec.blob.core.windows.net/private/images/12ead376-83
 Describing Image...
 
 {
-    "description": "The image shows a laptop with a complaint message on the screen, a smartphone, and a fan blowing air towards the laptop, possibly related to electronic overheating issues.",
+    "description": "A laptop emitting smoke, possibly indicating overheating or malfunction.",
     "annotation": [
         {
-            "bbox": [150, 200, 874, 700],
-            "label": "laptop with complaint message"
-        },
-        {
-            "bbox": [780, 550, 1000, 800],
-            "label": "fan blowing air"
-        },
-        {
-            "bbox": [650, 850, 900, 1000],
-            "label": "smartphone"
+            "bbox": [150, 400, 600, 600],
+            "label": "smoke"
         }
     ]
 }
@@ -52,8 +45,5 @@ Classifying description...
 
 Classification completed....
 classification result saved to: ./output/classification.txt
-The complaint related to a laptop potentially experiencing overheating issues should be classified under:
-
-- **Category**: Electronics
-  - **Subcategory**: Computers & Tablets
-
+Category: Electronics  
+Subcategory: Computers & Tablets
